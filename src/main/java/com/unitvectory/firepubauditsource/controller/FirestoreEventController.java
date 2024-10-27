@@ -13,7 +13,6 @@
  */
 package com.unitvectory.firepubauditsource.controller;
 
-import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,6 +115,11 @@ public class FirestoreEventController {
             jsonObject.add("oldValue", JsonNull.INSTANCE);
         }
 
+        // Convert jsonObject to JSON string
+        String jsonString = jsonObject.toString();
+        // Convert JSON string to bytes
+        ByteString jsonData = ByteString.copyFromUtf8(jsonString);
+
         // Publish the JSON message to the Pub/Sub topic
 
         // Preparing attributes for Pub/Sub message
@@ -124,7 +128,7 @@ public class FirestoreEventController {
 
         // Prepare the message to be published
         PubsubMessage message = PubsubMessage.newBuilder().setOrderingKey(documentPath)
-                .setData(ByteString.copyFrom(data)).putAllAttributes(attributes).build();
+                .setData(jsonData).putAllAttributes(attributes).build();
 
         // Publish the message
         try {
