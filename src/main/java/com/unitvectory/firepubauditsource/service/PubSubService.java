@@ -41,7 +41,7 @@ public class PubSubService {
         TopicName topicName = TopicName.of(projectId, pubsubTopic);
 
         try {
-            return Publisher.newBuilder(topicName).build();
+            return Publisher.newBuilder(topicName).setEnableMessageOrdering(true).build();
         } catch (IOException e) {
             throw new RuntimeException("Failed to create publisher", e);
         }

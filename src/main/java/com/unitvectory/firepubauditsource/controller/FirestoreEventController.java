@@ -33,7 +33,6 @@ import com.google.gson.JsonObject;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.pubsub.v1.PubsubMessage;
-import com.google.pubsub.v1.TopicName;
 import com.unitvectory.firepubauditsource.util.DocumentResourceNameUtil;
 import com.unitvectory.firestoreproto2json.FirestoreProto2Json;
 
