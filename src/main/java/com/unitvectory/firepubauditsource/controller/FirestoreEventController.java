@@ -109,7 +109,7 @@ public class FirestoreEventController {
 
         if (firestoreEventData.hasOldValue()) {
             // Convert the old value to JSON
-            JsonObject oldVauleJson = FirestoreProto2Json.DEFAULT.valueToJsonObject(firestoreEventData);
+            JsonObject oldVauleJson = FirestoreProto2Json.DEFAULT.oldValueToJsonObject(firestoreEventData);
             jsonObject.add("oldValue", oldVauleJson);
         } else {
             jsonObject.add("oldValue", JsonNull.INSTANCE);
