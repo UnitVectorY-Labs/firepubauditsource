@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,21 +51,8 @@ public class FirestoreEventController {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
             .withZone(ZoneOffset.UTC);
 
+    @Autowired
     private Publisher publisher;
-
-    public FirestoreEventController() {
-        // TODO: Change this to spring boot loading, this is a mess right now
-        String topicId = System.getenv("PUBSUB_TOPIC");
-        String projectId = System.getenv("PROJECT_ID");
-
-        TopicName topicName = TopicName.of(projectId, topicId);
-
-        try {
-            this.publisher = Publisher.newBuilder(topicName).build();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create publisher", e);
-        }
-    }
 
     @PostMapping(value = "/firestore", consumes = "application/protobuf")
     public void handleFirestoreEvent(@RequestBody byte[] data) throws InvalidProtocolBufferException {

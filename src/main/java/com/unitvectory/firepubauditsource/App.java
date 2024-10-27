@@ -15,6 +15,7 @@ package com.unitvectory.firepubauditsource;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * The Spring Boot 3 app for the firepubauditsource Cloud Run application.
@@ -22,6 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Jared Hatfield (UnitVectorY Labs)
  */
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.unitvectory.firepubauditsource"})
 public class App {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
