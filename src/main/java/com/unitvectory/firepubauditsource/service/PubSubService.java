@@ -14,13 +14,19 @@
 package com.unitvectory.firepubauditsource.service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.protobuf.ByteString;
+import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.TopicName;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Pub/Sub Service
@@ -28,22 +34,45 @@ import com.google.pubsub.v1.TopicName;
  * @author Jared Hatfield (UnitVectorY Labs)
  */
 @Service
+@Slf4j
 public class PubSubService {
 
-    @Value("${pubsub.topic}")
-    private String pubsubTopic;
+    private final Publisher publisher;
 
-    @Value("${project.id}")
-    private String projectId;
-
-    @Bean
-    public Publisher publisher() {
+    public PubSubService(@Value("${pubsub.topic}") String pubsubTopic,
+            @Value("${project.id}") String projectId) {
         TopicName topicName = TopicName.of(projectId, pubsubTopic);
 
         try {
-            return Publisher.newBuilder(topicName).setEnableMessageOrdering(true).build();
+            this.publisher = Publisher.newBuilder(topicName).setEnableMessageOrdering(true).build();
         } catch (IOException e) {
             throw new RuntimeException("Failed to create publisher", e);
+        }
+    }
+
+    public void publish(String jsonString, String documentPath, String database) {
+        // Preparing attributes for Pub/Sub message
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("database", database);
+
+        // Convert JSON string to bytes
+        ByteString jsonData = ByteString.copyFromUtf8(jsonString);
+
+        // Prepare the message to be published
+        PubsubMessage message = PubsubMessage.newBuilder().setOrderingKey(documentPath)
+                .setData(jsonData).putAllAttributes(attributes).build();
+
+        // Publish the message
+        try {
+            ApiFuture<String> future = publisher.publish(message);
+            publisher.publishAllOutstanding();
+            String messageId = future.get();
+
+            // Wait on the future to ensure message is sent
+            log.info("Published " + message.getOrderingKey() + " with message ID: " + messageId);
+        } catch (Exception e) {
+            log.error("Failed to publish message: " + message.getOrderingKey());
+            throw new RuntimeException("Failed to publish message.", e);
         }
     }
 }

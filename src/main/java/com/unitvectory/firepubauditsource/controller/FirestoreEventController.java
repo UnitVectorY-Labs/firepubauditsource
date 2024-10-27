@@ -16,22 +16,17 @@ package com.unitvectory.firepubauditsource.controller;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.pubsub.v1.Publisher;
 import com.google.events.cloud.firestore.v1.DocumentEventData;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.pubsub.v1.PubsubMessage;
+import com.unitvectory.firepubauditsource.service.PubSubService;
 import com.unitvectory.firepubauditsource.util.DocumentResourceNameUtil;
 import com.unitvectory.firestoreproto2json.FirestoreProto2Json;
 
@@ -50,18 +45,16 @@ public class FirestoreEventController {
             .withZone(ZoneOffset.UTC);
 
     @Autowired
-    private Publisher publisher;
+    private PubSubService pubSubService;
 
     @PostMapping(value = "/firestore", consumes = "application/protobuf")
     public void handleFirestoreEvent(@RequestBody byte[] data) throws InvalidProtocolBufferException {
 
-        // Timestamp for the current time
+        // Timestamp for the event
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
         // Parse the Firestore data
         DocumentEventData firestoreEventData = DocumentEventData.parseFrom(data);
-
-        // Process the request
 
         // Create the JSON object using gson
         JsonObject jsonObject = new JsonObject();
@@ -117,30 +110,8 @@ public class FirestoreEventController {
 
         // Convert jsonObject to JSON string
         String jsonString = jsonObject.toString();
-        // Convert JSON string to bytes
-        ByteString jsonData = ByteString.copyFromUtf8(jsonString);
 
         // Publish the JSON message to the Pub/Sub topic
-
-        // Preparing attributes for Pub/Sub message
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("database", database);
-
-        // Prepare the message to be published
-        PubsubMessage message = PubsubMessage.newBuilder().setOrderingKey(documentPath)
-                .setData(jsonData).putAllAttributes(attributes).build();
-
-        // Publish the message
-        try {
-            ApiFuture<String> future = publisher.publish(message);
-            publisher.publishAllOutstanding();
-            String messageId = future.get();
-
-            // Wait on the future to ensure message is sent
-            log.info("Published " + message.getOrderingKey() + " with message ID: " + messageId);
-        } catch (Exception e) {
-            log.error("Failed to publish message: " + message.getOrderingKey());
-            throw new RuntimeException("Failed to publish message.", e);
-        }
+        this.pubSubService.publish(jsonString, documentPath, database);
     }
 }
