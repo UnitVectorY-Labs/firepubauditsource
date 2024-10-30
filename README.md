@@ -4,6 +4,13 @@
 
 Publishes Firestore data changes to Pub/Sub as JSON audit records for downstream processing.
 
+## References
+
+- [firepubauditsource](https://github.com/UnitVectorY-Labs/firepubauditsource) - Publishes Firestore data changes to Pub/Sub as JSON audit records for downstream processing.
+- [firepubauditsource-tofu](https://github.com/UnitVectorY-Labs/firepubauditsource-tofu) - A module for OpenTofu that deploys firepubauditsource to GCP Cloud Run, along with configuring essential services including Eventarc for Firestore and Pub/Sub.
+- [bqpubauditsink](https://github.com/UnitVectorY-Labs/bqpubauditsink) - Ingests Pub/Sub audit JSON events and inserts the records into BigQuery.
+- [bqpubauditsink-tofu](https://github.com/UnitVectorY-Labs/bqpubauditsink-tofu) - A module for OpenTofu that deploys bqpubauditsink to GCP Cloud Run, along with configuring essential services including the Pub/Sub subscription and BigQuery dataset and table.
+
 ## Overview
 
 The purpose of this application is to take all record changes from a Firestore table and publish them to a Pub/Sub topic. This allows for downstream applications to process the complete database record changes including the old and new values. The companion application [bqpubauditsink](https://github.com/UnitVectorY-Labs/bqpubauditsink) takes the Pub/Sub messages and writes them to BigQuery in a way that allows BigQuery to be a direct replica of the data stored in Firestore.
