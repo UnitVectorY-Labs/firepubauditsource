@@ -26,6 +26,7 @@ import com.google.events.cloud.firestore.v1.DocumentEventData;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.unitvectory.firepubauditsource.model.RecordAction;
 import com.unitvectory.firepubauditsource.service.PubSubService;
 import com.unitvectory.firepubauditsource.util.DocumentResourceNameUtil;
 import com.unitvectory.firestoreproto2json.FirestoreProto2Json;
@@ -108,10 +109,20 @@ public class FirestoreEventController {
             jsonObject.add("oldValue", JsonNull.INSTANCE);
         }
 
+        // Set the action
+        RecordAction action = null;
+        if (firestoreEventData.hasValue() && firestoreEventData.hasOldValue()) {
+            action = RecordAction.UPDATE;
+        } else if (firestoreEventData.hasValue()) {
+            action = RecordAction.CREATE;
+        } else if (firestoreEventData.hasOldValue()) {
+            action = RecordAction.DELETE;
+        }
+
         // Convert jsonObject to JSON string
         String jsonString = jsonObject.toString();
 
         // Publish the JSON message to the Pub/Sub topic
-        this.pubSubService.publish(jsonString, documentPath, database);
+        this.pubSubService.publish(jsonString, documentPath, database, action);
     }
 }

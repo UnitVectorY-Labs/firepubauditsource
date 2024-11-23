@@ -25,6 +25,7 @@ import com.google.cloud.pubsub.v1.Publisher;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.TopicName;
+import com.unitvectory.firepubauditsource.model.RecordAction;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,10 +51,19 @@ public class PubSubService {
         }
     }
 
-    public void publish(String jsonString, String documentPath, String database) {
+    public void publish(String jsonString, String documentPath, String database, RecordAction action) {
         // Preparing attributes for Pub/Sub message
         Map<String, String> attributes = new HashMap<>();
         attributes.put("database", database);
+
+        // Split the documentPath on / and loop through each segment
+        String[] segments = documentPath.split("/");
+        for (int i = 0; i < segments.length; i++) {
+            attributes.put("path" + i, segments[i]);
+        }
+
+        // Add the action to the attributes
+        attributes.put("action", action.getAction());
 
         // Convert JSON string to bytes
         ByteString jsonData = ByteString.copyFromUtf8(jsonString);
