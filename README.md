@@ -13,9 +13,13 @@ Publishes Firestore data changes to Pub/Sub as JSON audit records for downstream
 
 ## Overview
 
-The purpose of this application is to take all record changes from a Firestore table and publish them to a Pub/Sub topic. This allows for downstream applications to process the complete database record changes including the old and new values. The companion application [bqpubauditsink](https://github.com/UnitVectorY-Labs/bqpubauditsink) takes the Pub/Sub messages and writes them to BigQuery in a way that allows BigQuery to be a direct replica of the data stored in Firestore.
+The purpose of this application is to take all record changes from a Firestore table and publish them to a Pub/Sub topic. This allows for downstream applications to process the complete database record changes including the old and new values.
 
 This application is designed to run in Cloud Run and is triggered by changes to Firestore records using Eventarc.
+
+### Use Case: BigQuery
+
+- A companion application [bqpubauditsink](https://github.com/UnitVectorY-Labs/bqpubauditsink) takes the Pub/Sub messages and writes them to BigQuery in a way that allows BigQuery to be a direct replica of the data stored in Firestore.
 
 ## Configuration
 
@@ -71,3 +75,7 @@ Deleting a Record:
   }
 }
 ```
+
+## Limitations
+
+- The translation from the Firestore document to JSON is not perfect, it uses [firestoreproto2json](https://github.com/UnitVectorY-Labs/firestoreproto2json) with the default settings to convert the Firestore document to JSON. This means that some data types may not be converted correctly.
