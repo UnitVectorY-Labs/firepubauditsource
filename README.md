@@ -76,6 +76,15 @@ Deleting a Record:
 }
 ```
 
+## Pub/Sub Attributes
+
+In order to assist with subscriptions that may want to only process a subset of messages, the following attributes are added to the Pub/Sub message:
+
+- `database`: The Firestore database ID.
+- `action`: The Firestore action that triggered the message. This will be one of `create`, `update`, or `delete`.
+
+The document `path` is also included as an attribute split into parts on the `/` character. This allows for subscriptions to filter on specific collections or documents. The attribute names are `path0`, `path1`, etc. so that the first part of the path is `path0` represents the collection and `path1` represents the document, but additional parts are also included for nested documents.
+
 ## Limitations
 
 - The translation from the Firestore document to JSON is not perfect, it uses [firestoreproto2json](https://github.com/UnitVectorY-Labs/firestoreproto2json) with the default settings to convert the Firestore document to JSON. This means that some data types may not be converted correctly.
