@@ -13,20 +13,18 @@
  */
 package com.unitvectory.firepubauditsource.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
-import com.google.pubsub.v1.TopicName;
 import com.unitvectory.firepubauditsource.model.RecordAction;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,24 +34,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class PubSubService {
 
     private final Publisher publisher;
-
-    public PubSubService(@Value("${pubsub.topic}") String pubsubTopic,
-            @Value("${project.id}") String projectId) {
-        TopicName topicName = TopicName.of(projectId, pubsubTopic);
-
-        try {
-            this.publisher = Publisher.newBuilder(topicName).setEnableMessageOrdering(true).build();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create publisher", e);
-        }
-    }
-
-    public PubSubService(Publisher publisher) {
-        this.publisher = publisher;
-    }
 
     public void publish(String jsonString, String documentPath, String database, RecordAction action) {
         // Preparing attributes for Pub/Sub message
