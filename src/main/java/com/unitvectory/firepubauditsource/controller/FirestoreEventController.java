@@ -51,8 +51,7 @@ public class FirestoreEventController {
 
     private PubSubService pubSubService;
 
-    // Allowing the timestamp source to be injected
-    private EpochTimeProvider epochTimeProvider = SystemEpochTimeProvider.getInstance();
+    private EpochTimeProvider epochTimeProvider;
 
     @PostMapping(value = "/firestore", consumes = "application/protobuf")
     public void handleFirestoreEvent(@RequestBody byte[] data) throws InvalidProtocolBufferException {
