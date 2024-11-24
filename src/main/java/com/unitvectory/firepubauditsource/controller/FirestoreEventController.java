@@ -27,7 +27,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.unitvectory.consistgen.epoch.EpochTimeProvider;
-import com.unitvectory.consistgen.epoch.SystemEpochTimeProvider;
 import com.unitvectory.firepubauditsource.model.RecordAction;
 import com.unitvectory.firepubauditsource.service.PubSubService;
 import com.unitvectory.firepubauditsource.util.DocumentResourceNameUtil;
