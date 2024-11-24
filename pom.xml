@@ -77,9 +77,36 @@
             <version>0.0.5</version>
         </dependency>
         <dependency>
+            <groupId>com.unitvectory</groupId>
+            <artifactId>consistgen</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.unitvectory</groupId>
+            <artifactId>jsonassertify</artifactId>
+            <version>0.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.unitvectory</groupId>
+            <artifactId>fileparamunit</artifactId>
+            <version>0.0.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

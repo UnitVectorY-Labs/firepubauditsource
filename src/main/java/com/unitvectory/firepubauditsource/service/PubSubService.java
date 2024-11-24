@@ -51,6 +51,10 @@ public class PubSubService {
         }
     }
 
+    public PubSubService(Publisher publisher) {
+        this.publisher = publisher;
+    }
+
     public void publish(String jsonString, String documentPath, String database, RecordAction action) {
         // Preparing attributes for Pub/Sub message
         Map<String, String> attributes = new HashMap<>();
