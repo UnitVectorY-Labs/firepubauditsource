@@ -1,0 +1,23 @@
+{
+    "input": "CoQBCktwcm9qZWN0cy91dnktcGVyc29uYWwvZGF0YWJhc2VzLyhkZWZhdWx0KS9kb2N1bWVudHMvbXljb2xsZWN0aW9uL215ZG9jdW1lbnQSGgoLbXlhdHRyaWJ1dGUSC4oBCG15dXBkYXRlGgsIpYWJugYQmPWgHyIMCNaFiboGEJimi5ABEoIBCktwcm9qZWN0cy91dnktcGVyc29uYWwvZGF0YWJhc2VzLyhkZWZhdWx0KS9kb2N1bWVudHMvbXljb2xsZWN0aW9uL215ZG9jdW1lbnQSGQoLbXlhdHRyaWJ1dGUSCooBB215dmFsdWUaCwilhYm6BhCY9aAfIgsIpYWJugYQmPWgHxoNCgtteWF0dHJpYnV0ZQ==",
+    "output": {
+      "message": {
+        "timestamp": "2024-11-24 00:00:00.000000",
+        "database": "(default)",
+        "documentPath": "mycollection/mydocument",
+        "value": {
+          "myattribute": "myupdate"
+        },
+        "oldValue": {
+          "myattribute": "myvalue"
+        }
+      },
+      "attributes": {
+        "action": "update",
+        "database": "(default)",
+        "path0": "mycollection",
+        "path1": "mydocument"
+      },
+      "orderingKey": "mycollection/mydocument"
+    }
+  }

@@ -13,11 +13,11 @@
  */
 package com.unitvectory.firepubauditsource.controller;
 
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +26,14 @@ import com.google.events.cloud.firestore.v1.DocumentEventData;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.unitvectory.consistgen.epoch.EpochTimeProvider;
+import com.unitvectory.consistgen.epoch.SystemEpochTimeProvider;
 import com.unitvectory.firepubauditsource.model.RecordAction;
 import com.unitvectory.firepubauditsource.service.PubSubService;
 import com.unitvectory.firepubauditsource.util.DocumentResourceNameUtil;
 import com.unitvectory.firestoreproto2json.FirestoreProto2Json;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,26 +43,30 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
+@AllArgsConstructor
 public class FirestoreEventController {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
             .withZone(ZoneOffset.UTC);
 
-    @Autowired
     private PubSubService pubSubService;
+
+    // Allowing the timestamp source to be injected
+    private EpochTimeProvider epochTimeProvider = SystemEpochTimeProvider.getInstance();
 
     @PostMapping(value = "/firestore", consumes = "application/protobuf")
     public void handleFirestoreEvent(@RequestBody byte[] data) throws InvalidProtocolBufferException {
 
-        // Timestamp for the event
-        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        // Get the current time
+        long now = epochTimeProvider.epochTimeMilliseconds();
+        ZonedDateTime eventTimestamp = ZonedDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneOffset.UTC);
 
         // Parse the Firestore data
         DocumentEventData firestoreEventData = DocumentEventData.parseFrom(data);
 
         // Create the JSON object using gson
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("timestamp", FORMATTER.format(now));
+        jsonObject.addProperty("timestamp", FORMATTER.format(eventTimestamp));
 
         // Get the resource name for the document for insert/update/delete
         String resourceName = null;
